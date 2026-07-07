@@ -24,7 +24,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         {
             entity.Property((d) => d.Name).IsRequired().HasMaxLength(150);
             entity.Property((d) => d.Skill).IsRequired().HasMaxLength(100);
-            entity.HasIndex((d) => d.Name).IsUnique();
         });
         
         // Project
