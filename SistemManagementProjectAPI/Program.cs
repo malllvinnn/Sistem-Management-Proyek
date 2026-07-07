@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SistemManagementProjectAPI.Data;
 using SistemManagementProjectAPI.Models;
+using SistemManagementProjectAPI.Repositories;
+using SistemManagementProjectAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,16 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>((options) =>
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
+
+// Add Repository Layer
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IDeveloperRepository, DeveloperRepository>();
+builder.Services.AddScoped<ITaskItemRepository, TaskItemRepository>();
+
+// Add Service Layer
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IDeveloperService, DeveloperService>();
+builder.Services.AddScoped<ITaskItemService, TaskItemService>();
 
 // Constrollers
 builder.Services.AddControllers();

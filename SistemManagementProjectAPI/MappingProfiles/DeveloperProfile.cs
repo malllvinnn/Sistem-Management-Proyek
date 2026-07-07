@@ -9,5 +9,6 @@ public class DeveloperProfile : Profile
     public DeveloperProfile()
     {
         CreateMap<Developer, DeveloperDto>();
+        CreateMap<UpdateDeveloperDto, Developer>();
     }
 }
