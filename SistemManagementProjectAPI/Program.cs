@@ -24,6 +24,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>((options) =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Constrollers
 builder.Services.AddControllers();
 
