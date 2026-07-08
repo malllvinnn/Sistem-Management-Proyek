@@ -1,6 +1,9 @@
+using System.Text;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SistemManagementProjectAPI.Data;
 using SistemManagementProjectAPI.DTOs.Developer;
 using SistemManagementProjectAPI.DTOs.Project;
@@ -30,6 +33,30 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>((options) =>
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+// JWT AUthentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secret = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret tidak dikonfigurasi");
+var key = Encoding.ASCII.GetBytes(secret);
+
+builder.Services.AddAuthentication((options) =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer((options) =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
