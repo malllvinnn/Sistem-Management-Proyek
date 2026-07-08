@@ -5,7 +5,7 @@ namespace SistemManagementProjectAPI.Validators;
 
 public class CreateTaskItemValidator : AbstractValidator<CreateTaskItemDto>
 {
-    CreateTaskItemValidator()
+    public CreateTaskItemValidator()
     {
         RuleFor((x) => x.Title)
             .NotEmpty().WithMessage("Title is required")

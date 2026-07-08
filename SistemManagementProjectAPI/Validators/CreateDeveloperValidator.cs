@@ -5,7 +5,7 @@ namespace SistemManagementProjectAPI.Validators;
 
 public class CreateDeveloperValidator : AbstractValidator<CreateDeveloperDto>
 {
-    CreateDeveloperValidator()
+    public CreateDeveloperValidator()
     {
         RuleFor((x) => x.Name)
             .NotEmpty().WithMessage("Name is required")
