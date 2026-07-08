@@ -1,9 +1,14 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SistemManagementProjectAPI.Data;
+using SistemManagementProjectAPI.DTOs.Developer;
+using SistemManagementProjectAPI.DTOs.Project;
+using SistemManagementProjectAPI.DTOs.TaskItem;
 using SistemManagementProjectAPI.Models;
 using SistemManagementProjectAPI.Repositories;
 using SistemManagementProjectAPI.Services;
+using SistemManagementProjectAPI.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +33,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>((options) =>
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
+
+// Fluent Validator
+builder.Services.AddScoped<IValidator<CreateProjectDto>, CreateProjectValidator>();
+builder.Services.AddScoped<IValidator<UpdateProjectDto>, UpdateProjectValidator>();
+builder.Services.AddScoped<IValidator<CreateDeveloperDto>, CreateDeveloperValidator>();
+builder.Services.AddScoped<IValidator<UpdateDeveloperDto>, UpdateDeveloperValidator>();
+builder.Services.AddScoped<IValidator<CreateTaskItemDto>, CreateTaskItemValidator>();
+builder.Services.AddScoped<IValidator<UpdateTaskItemDto>, UpdateTaskItemValidator>();
 
 // Add Repository Layer
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
