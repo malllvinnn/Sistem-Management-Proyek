@@ -11,7 +11,7 @@ public class UpdateDeveloperValidator : AbstractValidator<UpdateDeveloperDto>
             .NotEmpty().WithMessage("Name is required")
             .MaximumLength(150).WithMessage("Name must not exceed 150 characters");
         
-        RuleFor((x) => x.Skills)
+        RuleFor((x) => x.Skill)
             .NotEmpty().WithMessage("Skills is required")
             .MaximumLength(100).WithMessage("Skills must not exceed 100 characters");
     }
