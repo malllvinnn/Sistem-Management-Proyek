@@ -1,0 +1,90 @@
+using System.Security.Claims;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SistemManagementProjectAPI.DTOs.Auth;
+using SistemManagementProjectAPI.Services;
+
+namespace SistemManagementProjectAPI.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
+{
+    private readonly IAuthService _authService;
+    private readonly IValidator<RegisterDto> _registerValidator;
+    private readonly IValidator<LoginDto> _loginValidator;
+    
+    public AuthController(IAuthService authService, IValidator<RegisterDto> registerValidator, IValidator<LoginDto> loginValidator)
+    {
+        _authService = authService;
+        _registerValidator = registerValidator;
+        _loginValidator = loginValidator;
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    {
+        var validationResult = await _registerValidator.ValidateAsync(registerDto);
+        
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            
+            return BadRequest(new { IsSuccess = false, Message = "Validation failed", Errors = errors });
+        }
+
+        var result = await _authService.RegisterAsync(registerDto);
+        
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result);
+        }
+
+        return Ok(result);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    {
+        var validationResult = await _loginValidator.ValidateAsync(loginDto);
+        
+        if (!validationResult.IsValid)
+        {
+            var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+            
+            return BadRequest(new { IsSuccess = false, Message = "Validation failed", Errors = errors });
+        }
+
+        var result = await _authService.LoginAsync(loginDto);
+
+        if (!result.IsSuccess)
+        {
+            return Unauthorized(result);
+        }
+
+        return Ok(result);
+
+    }
+
+    [HttpGet("current")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        var result = await _authService.GetCurrentUserAsync(userId);
+
+        if (!result.IsSuccess)
+        {
+            return NotFound(result);
+        }
+
+        return Ok(result);
+    }
+}
